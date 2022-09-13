@@ -15,8 +15,7 @@ def check_customer_id(customer_id):
 
         return False
 
-
+# TODO
 # check if the password is correct
 def check_password(customer):
-
     return False

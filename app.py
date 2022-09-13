@@ -5,9 +5,10 @@ from Customer import Customer
 
 app = Flask(__name__)
 
+#Test
 @app.route("/", methods=["GET"])
 def get_name():
-    return jsonify(message='pizzas')
+    return jsonify(message='Heyyy')
 
 
 @app.route("/", methods=["POST"])

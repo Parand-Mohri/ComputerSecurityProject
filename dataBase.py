@@ -1,4 +1,5 @@
-from Customer import Customer
+
+# gonna be used as data base
 class dataBase:
 
     def __init__(self):
