@@ -1,19 +1,19 @@
 
-# gonna be used as data base
-class dataBase:
 
+# gonna be used as data base
+class DataBase:
     def __init__(self):
         self.customers = []
         # self.actions = []
 
     def get_customer(self):
-        return self.customer
+        return self.customers
 
     def add_customer(self, customer):
         self.customers.append(customer)
 
     def remove_customer(self, customer):
-        self.customer.remove(customer)
+        self.customers.remove(customer)
 
     # def get_actions(self):
     #     return self.customer
