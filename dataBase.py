@@ -3,14 +3,14 @@
 class dataBase:
 
     def __init__(self):
-        self.customer = []
+        self.customers = []
         # self.actions = []
 
     def get_customer(self):
         return self.customer
 
     def add_customer(self, customer):
-        self.customer.append(customer)
+        self.customers.append(customer)
 
     def remove_customer(self, customer):
         self.customer.remove(customer)

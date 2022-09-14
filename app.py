@@ -5,6 +5,7 @@ from Customer import Customer
 
 app = Flask(__name__)
 
+
 #Test
 @app.route("/", methods=["GET"])
 def get_name():
@@ -14,9 +15,9 @@ def get_name():
 @app.route("/", methods=["POST"])
 def create_customer():
     # error handeling should happend here
-    customer = Customer(request.json["customer_id"], request.json["password"], request.json["server"], request.json["actions"])
-    customer = post_customer.post_customer(customer)
-    data = customer
+    customer = Customer(request.json["id"], request.json["password"], request.json["server"], request.json["actions"])
+    # customer = post_customer.post_customer(customer)
+    data = customer.dictionary()
     return jsonify(message='pizzas',
                    category='success',
                    data=data,
