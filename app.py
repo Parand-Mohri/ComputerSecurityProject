@@ -14,10 +14,6 @@ def get_name():
     return jsonify(message='Heyyy')
 
 
-def get_name():
-    return jsonify(message='Heyyy')
-
-
 @app.route("/", methods=["POST"])
 def create_customer():
     # error handeling should happend here
