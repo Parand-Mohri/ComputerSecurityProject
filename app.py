@@ -13,6 +13,10 @@ db = DataBase()
 def get_name():
     return jsonify(message='Heyyy')
 
+#Test
+@app.route("/", methods=["GET"])
+def get_name():
+    return jsonify(message='Heyyy')
 
 @app.route("/", methods=["POST"])
 def create_customer():
