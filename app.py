@@ -38,7 +38,7 @@ def login():
     else:
         logging.info('logged in successfully') # logger test
         # if password
-        try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
+        try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
         customer = Customer(try_id, try_pswrd, request.json["server"], request.json["actions"], salt)
         customer = post.post_customer(db, customer)
         data = customer.dictionary()
