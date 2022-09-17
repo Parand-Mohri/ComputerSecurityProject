@@ -6,7 +6,7 @@ class DataBase:
         self.customers = []
         # self.actions = []
 
-    def get_customer(self):
+    def get_customers(self):
         return self.customers
 
     def add_customer(self, customer):
