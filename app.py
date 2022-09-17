@@ -14,15 +14,16 @@ db = DataBase()
 #Test
 @app.route("/", methods=["GET"])
 def get_name():
-    hash_password.hash_password("parand")
     return jsonify(message='Heyyy')
 
 
 @app.route("/", methods=["POST"])
 def create_customer():
-    # error handeling should happend here
+    # TODO: error handeling should happend here
     logging.info('logged in successfully') # logger test
-    customer = Customer(request.json["id"], request.json["password"], request.json["server"], request.json["actions"])
+    password = request.json["password"]
+    password, salt = hash_password.hash_salt_and_pepper(password)
+    customer = Customer(request.json["id"], password, request.json["server"], request.json["actions"], salt)
     customer = post_customer.post_customer(db, customer)
     data = customer.dictionary()
     return jsonify(message='Customer',
