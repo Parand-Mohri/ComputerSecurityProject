@@ -33,6 +33,7 @@ def get_customer_from_id(customer_id, dataBase):
 def check_password(customer, try_pswrd, hash):
     return hash.hash_check(try_pswrd, customer.password, customer.salt)
 
-#def doAction(customer):
-    #actions = customer["actions"]
-    #steps = actions["steps"]
+
+def doAction(customer):
+    actions = customer["actions"]
+    steps = actions["steps"]

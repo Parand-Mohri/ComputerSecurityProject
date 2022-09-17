@@ -3,6 +3,7 @@ import logging
 
 import hash_password as hash
 import post_customer as post
+from Action import Action
 from Customer import Customer
 from DataBase import DataBase
 
@@ -39,8 +40,9 @@ def login():
     else:
         logging.info('new account') # logger test
         # if password
+        actions = Action(request.json["delay"], request.json["steps"])
         try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
-        customer = Customer(try_id, try_pswrd, request.json["server"], request.json["actions"], salt)
+        customer = Customer(try_id, try_pswrd, request.json["server"], actions, salt)
         customer = post.post_customer(db, customer)
         data = customer.dictionary()
         return jsonify(message='new customer',
