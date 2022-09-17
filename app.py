@@ -1,18 +1,20 @@
 from flask import Flask, jsonify, request
 import logging
 
+import hash_password
 import post_customer
 from Customer import Customer
 from DataBase import DataBase
 
 app = Flask(__name__)
 db = DataBase()
-logging.basicConfig(filename='record.log', level=logging.DEBUG)
+# logging.basicConfig(filename='record.log', level=logging.DEBUG)
 
 
 #Test
 @app.route("/", methods=["GET"])
 def get_name():
+    hash_password.hash_password("parand")
     return jsonify(message='Heyyy')
 
 
