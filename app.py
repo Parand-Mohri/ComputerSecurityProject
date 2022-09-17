@@ -14,10 +14,6 @@ logging.basicConfig(filename='record.log', level=logging.DEBUG)
 #Test
 @app.route("/", methods=["GET"])
 def get_name():
-    p = "parand"
-    print(p[3:len(p)])
-    print(p[::3])
-    print(p[0:3] + p[3::] )
     return jsonify(message='Heyyy')
 
 
