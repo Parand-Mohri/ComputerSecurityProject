@@ -8,7 +8,7 @@ from DataBase import DataBase
 
 app = Flask(__name__)
 db = DataBase()
-# logging.basicConfig(filename='record.log', level=logging.DEBUG)
+logging.basicConfig(filename='record.log', level=logging.DEBUG)
 
 
 #Test
