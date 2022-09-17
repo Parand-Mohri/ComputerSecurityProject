@@ -19,3 +19,7 @@ def check_customer_id(customer_id):
 # check if the password is correct
 def check_password(customer):
     return False
+
+#def doAction(customer):
+    #actions = customer["actions"]
+    #steps = actions["steps"]
