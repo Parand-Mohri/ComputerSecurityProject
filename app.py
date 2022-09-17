@@ -23,26 +23,27 @@ def login():
     try_id = request.json["id"]
     try_pswrd = request.json["password"]
     if post.costumer_id_exists(try_id, db):
-        existing_cust = post.get_customer_from_id(try_id)
-        if post.check_password(existing_cust, try_pswrd,hash ) == False:
-            return jsonify(message='Error - wrong password',
+        existing_cust = post.get_customer_from_id(try_id,db)
+        if post.check_password(existing_cust, try_pswrd, hash):
+            # TODO: simultaneously actions for two people in same account
+            return jsonify(message='Password validated correctly!',
                    category='Fail',
-                   data=data,
+                   # data=data,
                    status=200)
         else:
-            return jsonify(message='Password validated correctly!',
+            return jsonify(message='Error - wrong password',
                    category='success',
-                   data=data,
+                   # data=data,
                    status=200)
 
     else:
-        logging.info('logged in successfully') # logger test
+        logging.info('new account') # logger test
         # if password
         try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
         customer = Customer(try_id, try_pswrd, request.json["server"], request.json["actions"], salt)
         customer = post.post_customer(db, customer)
         data = customer.dictionary()
-        return jsonify(message='Customer',
+        return jsonify(message='new customer',
                    category='success',
                    data=data,
                    status=200)
