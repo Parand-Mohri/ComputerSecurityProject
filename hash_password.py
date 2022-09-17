@@ -25,16 +25,17 @@ def salt_generator():
         salt += random.choice(string.ascii_letters + string.digits)
     return str(salt)
 
+
 # reverse the substring of password in a random location before hashing
 def pepper(password):
     num1 = random.randint(0, len(password))
-    password[num1::] = password[num1::][::-1]
+    password = password[0:num1] + password[num1::][::-1]
     return password
 
 
 # TODO: check all combinations of the pepper to check the password
 # check if the given password match the stored one
-def salt_hash_check(password: str, database_hash: str, database_salt: str) -> bool:
+def hash_check(password: str, database_hash: str, database_salt: str) -> bool:
     password = pepper(password)
     password = hash_password(password + database_salt)
     if password == database_hash:

@@ -14,13 +14,17 @@ logging.basicConfig(filename='record.log', level=logging.DEBUG)
 #Test
 @app.route("/", methods=["GET"])
 def get_name():
+    p = "parand"
+    print(p[3:len(p)])
+    print(p[::3])
+    print(p[0:3] + p[3::] )
     return jsonify(message='Heyyy')
 
 
 @app.route("/", methods=["POST"])
 def create_customer():
     # TODO: error handeling should happend here
-    logging.info('logged in successfully') # logger test
+    logging.info('logged in successfully') #logger test
     password = request.json["password"]
     password, salt = hash_password.hash_salt_and_pepper(password)
     customer = Customer(request.json["id"], password, request.json["server"], request.json["actions"], salt)
