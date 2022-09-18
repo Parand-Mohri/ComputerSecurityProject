@@ -9,6 +9,8 @@ from DataBase import DataBase
 
 app = Flask(__name__)
 db = DataBase()
+# TODO: test the log file in other classes
+# TODO: fix the config of log
 # logging.basicConfig(filename='record.log', level=logging.DEBUG)
 
 
@@ -18,7 +20,7 @@ def get_name():
     return jsonify(message='Heyyy')
 
 
-
+# TODO: check if actions are vaild
 @app.route("/", methods=["POST"])
 def login():
     try_id = request.json["id"]
@@ -38,8 +40,9 @@ def login():
                    status=200)
 
     else:
-        logging.info('new account') # logger test
-        # if password
+        # TODO: test the if else statement
+        # if come here account doesnt exist
+        logging.info('new account')
         actions = Action(request.json["delay"], request.json["steps"])
         try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
         customer = Customer(try_id, try_pswrd, request.json["server"], actions, salt)
@@ -50,20 +53,3 @@ def login():
                    data=data,
                    status=200)
 
-
-
-
-# @app.route("/", methods=["POST"])
-# def create_customer():
-#     # TODO: error handeling should happend here
-#     logging.info('logged in successfully') # logger test
-#     password = request.json["password"]
-#     # if password
-#     password, salt = hash_password.hash_salt_and_pepper(password)
-#     customer = Customer(request.json["id"], password, request.json["server"], request.json["actions"], salt)
-#     customer = post_customer.post_customer(db, customer)
-#     data = customer.dictionary()
-#     return jsonify(message='Customer',
-#                    category='success',
-#                    data=data,
-#                    status=200)

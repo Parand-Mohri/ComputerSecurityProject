@@ -1,13 +1,3 @@
-# from Customer import Customer
-# from dataBase import dataBase
-
-
-from dataclasses import dataclass
-from sqlite3 import DatabaseError
-from Customer import Customer
-
-from DataBase import DataBase
-
 
 def post_customer(dataBase, customer):
     dataBase.add_customer(customer)
@@ -15,15 +5,15 @@ def post_customer(dataBase, customer):
 
 
 # check if customer id already exist
-def costumer_id_exists(customer_id, dataBase):
-    for customer in dataBase.get_customers():
+def costumer_id_exists(customer_id, db):
+    for customer in db.get_customers():
         if customer_id == customer.customer_id:
             return True
         return False
 
 
-def get_customer_from_id(customer_id, dataBase):
-    for customer in dataBase.get_customers():
+def get_customer_from_id(customer_id, db):
+    for customer in db.get_customers():
         if customer_id == customer.customer_id:
             return customer
 
@@ -34,6 +24,9 @@ def check_password(customer, try_pswrd, hash):
     return hash.hash_check(try_pswrd, customer.password, customer.salt)
 
 
+# TODO: method responsible to do the actions
+# TODO: delay needs to be added here
 def doAction(customer):
     actions = customer["actions"]
-    steps = actions["steps"]
+    steps = actions["steps"
+]

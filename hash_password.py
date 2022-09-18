@@ -29,6 +29,7 @@ def salt_generator():
 
 
 # reverse the substring of password in a random location before hashing
+# TODO: find way to switch to this pepper
 def pepper(password):
     num1 = random.randint(0, len(password))
     password = password[0:num1] + password[num1::][::-1]
@@ -41,7 +42,6 @@ def simple_pepper(password):
     return password
 
 
-# TODO: check all combinations of the pepper to check the password
 # check if the given password match the stored one
 def hash_check(password: str, database_hash: str, database_salt: str) -> bool:
     password = simple_pepper(password)

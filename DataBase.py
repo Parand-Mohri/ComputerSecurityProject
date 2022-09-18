@@ -1,5 +1,4 @@
 
-
 # gonna be used as data base
 class DataBase:
     def __init__(self):
@@ -14,12 +13,3 @@ class DataBase:
 
     def remove_customer(self, customer):
         self.customers.remove(customer)
-
-    # def get_actions(self):
-    #     return self.customer
-    #
-    # def add_actions(self, customer):
-    #     self.customer.append(customer)
-    #
-    # def remove_actions(self, customer):
-    #     self.customer.remove(customer)
