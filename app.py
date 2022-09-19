@@ -28,7 +28,7 @@ def login():
     try_pswrd = request.json["password"]
     if post.costumer_id_exists(try_id, db):
         existing_cust = post.get_customer_from_id(try_id,db)
-        if post.check_password(existing_cust, try_pswrd, hash):
+        if post.check_password(existing_cust, try_pswrd):
             # TODO: simultaneously actions for two people in same account
             return jsonify(message='Password validated correctly!', category='succes',
                    # data=data,
@@ -42,6 +42,9 @@ def login():
         # TODO: test the if else statement
         # if come here account doesnt exist
         logging.info('new account')
+        actions = Action(request.json["actions"]["delay"], request.json["actions"]["steps"])
+        post.check_delay(actions.delay)
+        post.check_steps(actions.steps)
         if post.check_delay(request.json["delay"]) and post.check_steps(request.json["steps"]):
             return jsonify(message='action is valid!', category='succes',
             # data=data,
@@ -55,5 +58,10 @@ def login():
         server = Server(request.json["ip_address"], request.json["port"])
         customer = Customer(try_id, try_pswrd, server, actions, salt)
         customer = post.post_customer(db, customer)
+        post.task("1",0)
         data = customer.dictionary()
-        return jsonify(message='new customer',category='success',data=data,  status=200)
+        return jsonify(message='new customer',
+                   category='success',
+                   data=data,
+                   status=200)
+
