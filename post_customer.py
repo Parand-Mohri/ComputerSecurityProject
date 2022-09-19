@@ -1,4 +1,3 @@
-
 def post_customer(dataBase, customer):
     dataBase.add_customer(customer)
     return customer
@@ -29,4 +28,27 @@ def check_password(customer, try_pswrd, hash):
 def doAction(customer):
     actions = customer["actions"]
     steps = actions["steps"
-]
+    ]
+
+def is_number(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
+
+def check_delay(delay):
+    if is_number(delay) and float(delay) >= 0:
+            return True, float(delay)
+    else:
+        return False
+
+def check_steps(steps):
+    for s in steps:
+        if is_number(s) == False:
+            return False
+        else:
+            s = float(s)
+    return True, steps
+

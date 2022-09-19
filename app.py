@@ -31,12 +31,12 @@ def login():
         if post.check_password(existing_cust, try_pswrd, hash):
             # TODO: simultaneously actions for two people in same account
             return jsonify(message='Password validated correctly!',
-                   category='Fail',
+                   category='succes',
                    # data=data,
                    status=200)
         else:
             return jsonify(message='Error - wrong password',
-                   category='success',
+                   category='Fail',
                    # data=data,
                    status=200)
 
@@ -44,6 +44,8 @@ def login():
         # TODO: test the if else statement
         # if come here account doesnt exist
         logging.info('new account')
+        post.check_delay(request.json["delay"])
+        post.check_steps(request.json["steps"])
         actions = Action(request.json["delay"], request.json["steps"])
         try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
         server = Server(request.json["ip_address"], request.json["port"])
