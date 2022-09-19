@@ -12,7 +12,7 @@ class Customer():
         return {
             "customer_id": self.customer_id,
             "password": self.password,
-            "server": self.server,
+            "server": self.server.dictionary(),
             "actions": self.actions,
             "value": self.value
         }

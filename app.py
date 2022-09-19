@@ -6,6 +6,7 @@ import post_customer as post
 from Action import Action
 from Customer import Customer
 from DataBase import DataBase
+from Server import Server
 
 app = Flask(__name__)
 db = DataBase()
@@ -45,7 +46,8 @@ def login():
         logging.info('new account')
         actions = Action(request.json["delay"], request.json["steps"])
         try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
-        customer = Customer(try_id, try_pswrd, request.json["server"], actions, salt)
+        server = Server(request.json["ip_address"], request.json["port"])
+        customer = Customer(try_id, try_pswrd, server, actions, salt)
         customer = post.post_customer(db, customer)
         data = customer.dictionary()
         return jsonify(message='new customer',
