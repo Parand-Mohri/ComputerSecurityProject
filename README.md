@@ -1,2 +1,2 @@
 # ComputerSecurity
-CS 2022 Assignments & Projects Year 3 Maastricht university Bachelor DKE 
+CS 2022 Projects Year 3 Maastricht university Bachelor DKE 
