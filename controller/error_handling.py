@@ -64,7 +64,7 @@ def get_customer_from_id(customer_id, db: data_base) -> Customer:
 # The password is checked with the given assumption that the id is already verified/ existing.
 # There is only one password for a given attempted password so we check the passwords one to one
 def check_password(customer: Customer, try_pswrd: str) -> bool:
-    return hash_check(try_pswrd, customer.password, customer.salt)
+    return hash_password.hash_check(try_pswrd, customer.password, customer.salt)
 
 
 # check if the value in string is a number
