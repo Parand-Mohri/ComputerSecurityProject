@@ -3,7 +3,6 @@
 class DataBase:
     def __init__(self):
         self.customers = []
-        # self.actions = []
 
     def get_customers(self):
         return self.customers
