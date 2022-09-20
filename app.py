@@ -20,8 +20,9 @@ db = DataBase()
 def get_name():
     return jsonify(message='Heyyy')
 
-
-# TODO: check if actions are vaild
+# TODO:Logout
+# TODO: add type of instance and putput to methods
+# TODO: add limitation for id and password and server
 @app.route("/", methods=["POST"])
 def login():
     try_id = request.json["id"]
@@ -30,7 +31,7 @@ def login():
         existing_cust = post.get_customer_from_id(try_id,db)
         if post.check_password(existing_cust, try_pswrd):
             # TODO: simultaneously actions for two people in same account
-            return jsonify(message='Password validated correctly!', category='succes',
+            return jsonify(message='Password validated correctly!', category='Success',
                    # data=data,
                    status=200)
         else:
@@ -39,29 +40,25 @@ def login():
                    status=200)
 
     else:
-        # TODO: test the if else statement
         # if come here account doesnt exist
         logging.info('new account')
         actions = Action(request.json["actions"]["delay"], request.json["actions"]["steps"])
         post.check_delay(actions.delay)
         post.check_steps(actions.steps)
-        if post.check_delay(request.json["delay"]) and post.check_steps(request.json["steps"]):
-            return jsonify(message='action is valid!', category='succes',
-            # data=data,
-            status=200)
+        if post.check_delay(actions.delay) and post.check_steps(actions.steps):
+            try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
+            server = Server(request.json["server"]["ip"], request.json["server"]["port"])
+            customer = Customer(try_id, try_pswrd, server, actions, salt)
+            customer = post.post_customer(db, customer)
+            post.task(customer, 0)
+            data = customer.dictionary()
+            return jsonify(message='new customer',
+                           category='success',
+                           data=data,
+                           status=200)
         else:
             return jsonify(message='Error - action is not valid', category='Fail',
                            # data=data,
                            status=200)
-        actions = Action(request.json["delay"], request.json["steps"])
-        try_pswrd, salt = hash.hash_salt_and_pepper(try_pswrd)
-        server = Server(request.json["ip_address"], request.json["port"])
-        customer = Customer(try_id, try_pswrd, server, actions, salt)
-        customer = post.post_customer(db, customer)
-        post.task("1",0)
-        data = customer.dictionary()
-        return jsonify(message='new customer',
-                   category='success',
-                   data=data,
-                   status=200)
+
 

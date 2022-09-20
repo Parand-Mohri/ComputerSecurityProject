@@ -29,54 +29,18 @@ def check_password(customer, try_pswrd):
     return hash_check(try_pswrd, customer.password, customer.salt)
 
 
-# TODO: method responsible to do the actions
-# TODO: delay needs to be added here
-def do_step():
-    print("Hello, World!")
-    # actions = customer.actions
-    # steps = actions.steps
-    # first_step = steps[0]
-    # customer.add(int(first_step))
-
-
-# def do_action(customer):
-#
-#     delaying_time(customer)
-
-
-# target task function
-# def task(message):
-#     print(message)
-
-def task(message, i):
-    print(message)
-    # actions = customer.actions
-    # for i in range(len(actions.steps)):
-    # i = 0
-    # S = threading.Timer(int(actions.delay), task, args=('Hello world',)).start()
-    # timer = threading.Timer(10, do_step(), args=(arg1, arg2))
-    # while i < 5:
+def task(customer, i):
+    actions = customer.actions
+    steps = actions.steps
+    first_step = steps[i]
+    customer.add(int(first_step))
     i += 1
-    timer = threading.Timer(5, task, args=('Hello world',i,))
+    timer = threading.Timer(int(actions.delay), task, args=(customer, i,))
     timer.start()
-    # print(customer.customer_id , "-----------", actions.delay )
-
-    if i == 5:
+    if i == len(actions.steps):
         timer.cancel()
-    # actions = customer.actions
-    # steps = actions.steps
-    # first_step = steps[0]
-    # customer.add(int(first_step))
-    #     i+= 1
+    print(customer.customer_id, "----------", actions.delay, "----------", customer.value)
 
-
-
-
-
-def doAction(customer):
-    actions = customer["actions"]
-    steps = actions["steps"
-    ]
 
 def is_number(string):
     try:
@@ -88,9 +52,10 @@ def is_number(string):
 
 def check_delay(delay):
     if is_number(delay) and float(delay) >= 0:
-            return True, float(delay)
+        return True, float(delay)
     else:
         return False
+
 
 def check_steps(steps):
     for s in steps:
@@ -99,4 +64,3 @@ def check_steps(steps):
         else:
             s = float(s)
     return True, steps
-
