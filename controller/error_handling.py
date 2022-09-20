@@ -10,7 +10,7 @@ from information.server import Server
 
 
 # TODO: add limitation for id and password and server
-# TODO: do something about check actions inside another person loging it make eroor
+# TODO: do something about check actions inside another person loging it make error
 def check_input(customer_input: dict, db: data_base):
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
