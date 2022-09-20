@@ -1,5 +1,5 @@
 class Action():
-    def __init__(self, delay, steps):
+    def __init__(self, delay: int, steps: int):
         self.delay = delay
         self.steps = steps
 
