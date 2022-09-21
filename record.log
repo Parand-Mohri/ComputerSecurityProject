@@ -9,3 +9,7 @@ INFO:root:new account
 INFO:root:('Customer:', 'Bi', ': amount was: ', '0', ', and is now: ', '2') : Add
 INFO:root:('Customer:', 'Bi', ': amount was: ', '2', ', and is now: ', '4') : Add
 INFO:root:('Customer:', 'Bi', ': amount was: ', '4', ', and is now: ', '8') : Add
+INFO:root:new account
+INFO:root:('Customer:', 'Bi', ': amount was: ', '0', ', and is now: ', '2.0') : Add
+INFO:root:('Customer:', 'Bi', ': amount was: ', '2.0', ', and is now: ', '4.0') : Add
+INFO:root:('Customer:', 'Bi', ': amount was: ', '4.0', ', and is now: ', '8.0') : Add

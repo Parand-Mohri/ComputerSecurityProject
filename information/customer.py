@@ -28,7 +28,9 @@ class Customer():
     def add(self, value_amount: float):
         previous_value = self.value
         self.value = self.value + value_amount
-        logging.info('Customer' , self.customer_id , ': amount was: ' , previous_value , ', and is now:', self.value)
+        msg = "Customer:", str(self.customer_id), ": amount was: ", str(previous_value), ", and is now: ", str(
+            self.value)
+        logging.info('%s : Add', msg)
 
     # do the steps with the given delay
     def do_steps(self, i: int):
