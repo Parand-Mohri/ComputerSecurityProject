@@ -1,2 +1,11 @@
-INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
-INFO:werkzeug:127.0.0.1 - - [19/Sep/2022 17:40:04] "[37mGET / HTTP/1.1[0m" 200 -
+
+
+
+INFO:root:new account
+INFO:root:('Customer:', 'Bi', ': amount was: ', '0', ', and is now: ', '2') : Add
+INFO:root:('Customer:', 'Bi', ': amount was: ', '2', ', and is now: ', '4') : Add
+INFO:root:('Customer:', 'Bi', ': amount was: ', '4', ', and is now: ', '8') : Add
+INFO:root:new account
+INFO:root:('Customer:', 'Bi', ': amount was: ', '0', ', and is now: ', '2') : Add
+INFO:root:('Customer:', 'Bi', ': amount was: ', '2', ', and is now: ', '4') : Add
+INFO:root:('Customer:', 'Bi', ': amount was: ', '4', ', and is now: ', '8') : Add

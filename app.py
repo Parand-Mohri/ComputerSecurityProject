@@ -12,7 +12,12 @@ app = Flask(__name__)
 db = DataBase()
 # TODO: test the log file in other classes
 # TODO: fix the config of log
-# logging.basicConfig(filename='record.log', level=logging.DEBUG)
+
+logging.basicConfig(filename="record.log", level=logging.DEBUG)
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
+app.logger.disabled = True
 
 
 #Test
