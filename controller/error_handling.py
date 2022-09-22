@@ -43,7 +43,7 @@ def check_input(customer_input: dict, db: data_base):
         check_d, delay = check_delay(customer_input["actions"]["delay"])
         is_pw = check_pw(customer_input["password"])
         is_id = check_id(customer_input["id"])
-        # TODO: put different ifs for id, pass and actions to give the right error
+        # TODO: put different ifs for id, pass and actions to give the right error -> Clau
         if check_d and check_s and is_pw and is_id:
             actions = Action(delay=delay, steps=steps)
             try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
@@ -63,10 +63,10 @@ def check_input(customer_input: dict, db: data_base):
 
 # check if customer id already exist
 def costumer_id_exists(customer_id, db: data_base) -> bool:
-    for customer in db.get_customers():
+    for customer in db.customers:
         if customer_id == customer.customer_id:
             return True
-        return False
+    return False
 
 
 # find the customer from db using its id
