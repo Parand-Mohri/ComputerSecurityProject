@@ -6,7 +6,7 @@ from controller import data_base
 from controller import hash_password
 from information.action import Action
 from information.customer import Customer
-from information.server import Server
+from information.server import server
 
 
 # TODO: add limitation for id and password and server
@@ -18,6 +18,16 @@ def check_input(customer_input: dict, db: data_base):
         existing_cust = get_customer_from_id(try_id, db)
         if check_password(existing_cust, try_pswrd):
             # TODO: simultaneously actions for two people in same account
+
+            # Checking if new actions are valid
+            check_s, steps = check_steps(customer_input["actions"]["steps"])
+            check_d, delay = check_delay(customer_input["actions"]["delay"])
+            if check_d and check_s:
+                existing_cust.add_steps(steps, 0)
+                existing_cust.do_steps(0)
+            else:
+                return jsonify(message='Error - action is not valid', category='Fail')
+
             return jsonify(message='Password validated correctly!', category='Success',
                            # data=data,
                            status=200)

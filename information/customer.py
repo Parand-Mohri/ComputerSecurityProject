@@ -43,3 +43,8 @@ class Customer():
         if i == len(self.actions.steps):
             timer.cancel()
         print(self.customer_id, "----------", self.actions.delay, "----------", self.value)
+
+    def add_steps(self, new_steps, i: int):
+        next_step = new_steps[i]
+        self.add(float(next_step))
+        i += 1
