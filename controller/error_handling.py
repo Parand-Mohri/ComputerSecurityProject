@@ -18,6 +18,7 @@ def check_input(customer_input: dict, db: data_base):
         existing_cust = get_customer_from_id(try_id, db)
         if check_password(existing_cust, try_pswrd):
             # TODO: simultaneously actions for two people in same account
+
             return jsonify(message='Password validated correctly!', category='Success',
                            # data=data,
                            status=200)
@@ -30,7 +31,9 @@ def check_input(customer_input: dict, db: data_base):
         logging.info('new account')
         check_s, steps = check_steps(customer_input["actions"]["steps"])
         check_d, delay = check_delay(customer_input["actions"]["delay"])
-        if check_d and check_s:
+        is_pw = check_pw(customer_input["password"])
+        is_id = check_id(customer_input["id"])
+        if check_d and check_s and is_pw and is_id:
             actions = Action(delay=delay, steps=steps)
             try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
             server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
@@ -92,3 +95,17 @@ def check_steps(steps):
         else:
             float(s)
     return True, steps
+
+
+def check_id(cust_id : str) -> bool:
+    if len(cust_id) < 20:
+        return True
+    else:
+        return False
+
+
+def check_pw(cust_pw : str) ->bool:
+    if len(cust_pw)< 120:
+        return True
+    else:
+        return False
