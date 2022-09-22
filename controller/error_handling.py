@@ -23,7 +23,7 @@ def check_input(customer_input: dict, db: data_base):
             check_s, steps = check_steps(customer_input["actions"]["steps"])
             check_d, delay = check_delay(customer_input["actions"]["delay"])
             if check_d and check_s:
-                existing_cust.add_steps(steps, 0)
+                existing_cust.add_steps(steps)
                 existing_cust.do_steps(0)
             else:
                 return jsonify(message='Error - action is not valid', category='Fail')
