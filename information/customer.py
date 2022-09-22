@@ -35,14 +35,14 @@ class Customer():
 
     # do the steps with the given delay
     # TODO : change inprocess if new instance add actions
-    def do_steps(self, i: int):
+    def do_steps(self):
         steps = self.actions.steps
-        next_step = steps[i]
+        next_step = steps[self.action.start_at]
         self.add(float(next_step))
-        i += 1
-        timer = threading.Timer(float(self.actions.delay), self.do_steps, args=(i,))
+        self.action.start_at +=1
+        timer = threading.Timer(float(self.actions.delay), self.do_steps, args=(self.action.start_at,))
         timer.start()
-        if i == len(self.actions.steps):
+        if self.action.start_at == len(self.actions.steps):
             self.inprocess = False
             timer.cancel()
         print(self.customer_id, "----------", self.actions.delay, "----------", self.value)

@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request, logging, session
+from flask import Flask, jsonify, request, session
+import logging
 
 from controller import error_handling
 from controller.data_base import DataBase

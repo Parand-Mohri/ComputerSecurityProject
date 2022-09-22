@@ -24,7 +24,8 @@ def check_input(customer_input: dict, db: data_base):
                 check_d, delay = check_delay(customer_input["actions"]["delay"])
                 if check_d and check_s:
                     existing_cust.add_steps(steps)
-                    existing_cust.do_steps(0)
+                    #existing_cust.do_steps(0)
+                    existing_cust.do_steps()
                 else:
                     return jsonify(message='Error - action is not valid', category='Fail')
 
@@ -49,7 +50,8 @@ def check_input(customer_input: dict, db: data_base):
             server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
             customer = Customer(try_id, try_pswrd, server, actions, salt)
             db.add_customer(customer)  # add customer to db
-            customer.do_steps(0)
+            #customer.do_steps(0)
+            customer.do_steps()
             data = customer.dictionary()
             return jsonify(message='new customer',
                            category='success',
