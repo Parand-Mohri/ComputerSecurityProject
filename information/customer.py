@@ -1,7 +1,6 @@
 import logging
 import threading
 
-
 from information import action
 from information import server
 
@@ -14,6 +13,8 @@ class Customer():
         self.actions = actions
         self.salt = salt
         self.value = 0
+        self.last_instance = 1
+        self.inprocess = True
 
     def dictionary(self):
         return {
@@ -33,6 +34,7 @@ class Customer():
         logging.info('%s : Add', msg)
 
     # do the steps with the given delay
+    # TODO : change inprocess if new instance add actions
     def do_steps(self, i: int):
         steps = self.actions.steps
         next_step = steps[i]
@@ -41,5 +43,6 @@ class Customer():
         timer = threading.Timer(float(self.actions.delay), self.do_steps, args=(i,))
         timer.start()
         if i == len(self.actions.steps):
+            self.inprocess = False
             timer.cancel()
         print(self.customer_id, "----------", self.actions.delay, "----------", self.value)

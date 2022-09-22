@@ -9,19 +9,20 @@ from information.customer import Customer
 from information.server import Server
 
 
-# TODO: add limitation for id and password and server
-# TODO: do something about check actions inside another person loging it make error
 def check_input(customer_input: dict, db: data_base):
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
     if costumer_id_exists(try_id, db):
         existing_cust = get_customer_from_id(try_id, db)
         if check_password(existing_cust, try_pswrd):
-            # TODO: simultaneously actions for two people in same account
-
-            return jsonify(message='Password validated correctly!', category='Success',
-                           # data=data,
-                           status=200)
+            if existing_cust.last_instance >= 2:
+                return jsonify("message: only two instances can be in same account")
+            else:
+                existing_cust.last_instance += 1
+                # TODO: simultaneously actions for two people in same account
+                return jsonify(message='Password validated correctly!', category='Success',
+                             # data=data,
+                            status=200)
         else:
             return jsonify(message='Error - wrong password', category='Fail',
                            # data=data,
@@ -33,6 +34,7 @@ def check_input(customer_input: dict, db: data_base):
         check_d, delay = check_delay(customer_input["actions"]["delay"])
         is_pw = check_pw(customer_input["password"])
         is_id = check_id(customer_input["id"])
+        # TODO: put different ifs for id, pass and actions to give the right error
         if check_d and check_s and is_pw and is_id:
             actions = Action(delay=delay, steps=steps)
             try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
@@ -62,6 +64,7 @@ def get_customer_from_id(customer_id, db: data_base) -> Customer:
     for customer in db.get_customers():
         if customer_id == customer.customer_id:
             return customer
+    return None
 
 
 # The password is checked with the given assumption that the id is already verified/ existing.
@@ -97,15 +100,15 @@ def check_steps(steps):
     return True, steps
 
 
-def check_id(cust_id : str) -> bool:
+def check_id(cust_id: str) -> bool:
     if len(cust_id) < 20:
         return True
     else:
         return False
 
 
-def check_pw(cust_pw : str) ->bool:
-    if len(cust_pw)< 120:
+def check_pw(cust_pw: str) -> bool:
+    if len(cust_pw) < 120:
         return True
     else:
         return False
