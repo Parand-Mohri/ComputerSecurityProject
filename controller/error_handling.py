@@ -9,6 +9,7 @@ from information.customer import Customer
 from information.server import Server
 
 
+# TODO: do something about check actions inside another person loging it make error
 def check_input(customer_input: dict, db: data_base):
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
@@ -43,22 +44,26 @@ def check_input(customer_input: dict, db: data_base):
         check_d, delay = check_delay(customer_input["actions"]["delay"])
         is_pw = check_pw(customer_input["password"])
         is_id = check_id(customer_input["id"])
-        # TODO: put different ifs for id, pass and actions to give the right error -> Clau
-        if check_d and check_s and is_pw and is_id:
-            actions = Action(delay=delay, steps=steps)
-            try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
-            server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
-            customer = Customer(try_id, try_pswrd, server, actions, salt)
-            db.add_customer(customer)  # add customer to db
-            #customer.do_steps(0)
-            customer.do_steps()
-            data = customer.dictionary()
-            return jsonify(message='new customer',
-                           category='success',
-                           data=data,
-                           status=200)
+        if is_id:
+            if is_pw:
+                if check_d and check_s and is_pw and is_id:
+                    actions = Action(delay=delay, steps=steps)
+                    try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
+                    server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
+                    customer = Customer(try_id, try_pswrd, server, actions, salt)
+                    db.add_customer(customer)  # add customer to db
+                    customer.do_steps(0)
+                    data = customer.dictionary()
+                    return jsonify(message='new customer',
+                                   category='success',
+                                   data=data,
+                                   status=200)
+                else:
+                    return jsonify(message='Error - action is not valid', category='Fail')
+            else:
+                return jsonify(message='Error - password is not valid', category='Fail')
         else:
-            return jsonify(message='Error - action is not valid', category='Fail')
+            return jsonify(message='Error - id is not valid', category='Fail')
 
 
 # check if customer id already exist
@@ -122,3 +127,15 @@ def check_pw(cust_pw: str) -> bool:
         return True
     else:
         return False
+
+
+def add_actions(customer, steps):
+    customer.actions.add(steps)
+
+
+
+
+def add_actions(customer, steps):
+    customer.actions.add(steps)
+
+
