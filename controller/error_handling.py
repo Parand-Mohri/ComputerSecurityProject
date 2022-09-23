@@ -8,6 +8,10 @@ from information.action import Action
 from information.customer import Customer
 from information.server import Server
 
+# TODO input the ip and port of the computer running
+main_server_ip_address = "Server ip"
+main_server_port = "port"
+
 
 # TODO: do something about check actions inside another person loging it make error
 def check_input(customer_input: dict, db: data_base):
@@ -25,14 +29,14 @@ def check_input(customer_input: dict, db: data_base):
                 check_d, delay = check_delay(customer_input["actions"]["delay"])
                 if check_d and check_s:
                     existing_cust.add_steps(steps)
-                    #existing_cust.do_steps(0)
+                    # existing_cust.do_steps(0)
                     existing_cust.do_steps()
                 else:
                     return jsonify(message='Error - action is not valid', category='Fail')
 
                 return jsonify(message='Password validated correctly!', category='Success',
-                             # data=data,
-                            status=200)
+                               # data=data,
+                               status=200)
         else:
             return jsonify(message='Error - wrong password', category='Fail',
                            # data=data,
@@ -44,9 +48,10 @@ def check_input(customer_input: dict, db: data_base):
         check_d, delay = check_delay(customer_input["actions"]["delay"])
         is_pw = check_pw(customer_input["password"])
         is_id = check_id(customer_input["id"])
+        check_serv = check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
         if is_id:
             if is_pw:
-                if check_d and check_s and is_pw and is_id:
+                if check_d and check_s and is_pw and is_id and check_serv:
                     actions = Action(delay=delay, steps=steps)
                     try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
                     server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
@@ -133,9 +138,6 @@ def add_actions(customer, steps):
     customer.actions.add(steps)
 
 
-
-
-def add_actions(customer, steps):
-    customer.actions.add(steps)
-
-
+def check_srvr(customer, new_ip_address, new_port):
+    if new_ip_address == main_server_ip_address and new_port == main_server_port:
+        return True
