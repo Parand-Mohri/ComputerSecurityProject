@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import logging
 
-from controller import error_handling
+from controller import error_handling, control
 from controller.data_base import DataBase
 
 app = Flask(__name__)
@@ -28,21 +28,13 @@ def get_name():
 
 @app.route("/", methods=["POST"])
 def login():
-    return error_handling.check_input(request.json, db)
+    return control.login(request.json, db)
 
 
-@app.route('/logout/<id>')
-def logout(id):
-    customer = error_handling.get_customer_from_id(id, db)
-    if customer is None:
-        return jsonify({'message': 'The account does not exist to log out'})
-    if customer.last_instance > 1:
-        customer.last_instance -= 1
-        return jsonify({'message': 'You logged out successfully & you NOT the last instance'})
-    if customer.inprocess:
-        return jsonify({'message': 'cant logout when actions still happening'})
-    db.remove_customer(customer)
-    return jsonify({'message': 'You logged out successfully'})
+@app.route('/logout/<customer_id>')
+def logout(customer_id):
+    return control.logout(customer_id, db)
+
 
 
 

@@ -1,56 +1,10 @@
-import logging
-
-from flask import jsonify
-
 from controller import data_base
 from controller import hash_password
-from information.action import Action
 from information.customer import Customer
-from information.server import Server
 
 # TODO input the ip and port of the computer running
 main_server_ip_address = "SERVER_IP"
 main_server_port = "PORT"
-
-
-def check_input(customer_input: dict, db: data_base):
-    try_id = customer_input["id"]
-    try_pswrd = customer_input["password"]
-    check_s, steps = check_steps(customer_input["actions"]["steps"])
-    check_d, delay = check_delay(customer_input["actions"]["delay"])
-    check_serv = check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
-    if not check_serv:
-        return jsonify(messag='Error - server is not valid', category='Fail')
-    if not check_d and not check_s:
-        return jsonify(message='Error - actions are not valid', category='Fail')
-    if costumer_id_exists(try_id, db):
-        existing_cust = get_customer_from_id(try_id, db)
-        if not check_password(existing_cust, try_pswrd):
-            return jsonify(message='Error - wrong password', category='Fail')
-        if existing_cust.last_instance >= 2:
-            return jsonify(message='Error - only two instances can be in same account', category='Fail')
-        existing_cust.last_instance += 1
-        existing_cust.add_steps(steps)
-        existing_cust.do_steps()
-        return jsonify(message='Password validated correctly!', category='Success')
-    else:
-        is_pw = check_pw(customer_input["password"])
-        is_id = check_id(customer_input["id"])
-        if not is_pw:
-            return jsonify(message='Error - password is not valid. Password can be at most 120 characters.',
-                           category='Fail')
-        if not is_id:
-            return jsonify(message='Error - id is not valid. Id can be at most 20 characters.', category='Fail')
-        actions = Action(delay=delay, steps=steps)
-        try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
-        server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
-        customer = Customer(try_id, try_pswrd, server, actions, salt)
-        db.add_customer(customer)  # add customer to db
-        customer.do_steps()
-        data = customer.dictionary()
-        return jsonify(message='new customer',
-                       category='success',
-                       data=data)
 
 
 # check if customer id already exist
