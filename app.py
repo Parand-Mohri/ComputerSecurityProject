@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import logging
 
 from controller import error_handling
@@ -6,6 +7,7 @@ from controller.data_base import DataBase
 
 app = Flask(__name__)
 db = DataBase()
+CORS(app)
 
 # logging.basicConfig(filename="record.log", level=logging.DEBUG)
 

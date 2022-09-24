@@ -21,7 +21,7 @@ def check_input(customer_input: dict, db: data_base):
         existing_cust = get_customer_from_id(try_id, db)
         if check_password(existing_cust, try_pswrd):
             if existing_cust.last_instance >= 2:
-                return jsonify("message: only two instances can be in same account")
+                return jsonify({'message': ' only two instances can be in same account'})
             else:
                 existing_cust.last_instance += 1
                 # TODO: simultaneously actions for two people in same account
