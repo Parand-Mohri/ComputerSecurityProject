@@ -10,6 +10,7 @@ from information.server import Server
 
 
 def login(customer_input: dict, db: data_base):
+    """return success if all the information given is correct"""
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
     check_s, steps = eh.check_steps(customer_input["actions"]["steps"])

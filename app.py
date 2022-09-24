@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import logging
 
-from controller import error_handling, control
+from controller import control
 from controller.data_base import DataBase
 
 app = Flask(__name__)

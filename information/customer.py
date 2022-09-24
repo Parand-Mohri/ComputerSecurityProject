@@ -25,17 +25,16 @@ class Customer():
             "value": self.value
         }
 
-    # add the given step to value
     def add(self, value_amount: float):
+        """add the step to  value"""
         previous_value = self.value
         self.value = self.value + value_amount
         msg = "Customer:", str(self.customer_id), ": amount was: ", str(previous_value), ", and is now: ", str(
             self.value)
         logging.info('%s : Add', msg)
 
-    # do the steps with the given delay
-    # TODO : change inprocess if new instance add actions
     def do_steps(self):
+        """do the steps with given delay"""
         steps = self.actions.steps
         print(self.actions.start_at)
         next_step = steps[self.actions.start_at]
@@ -47,7 +46,6 @@ class Customer():
             self.inprocess = False
             timer.cancel()
 
-        print(self.customer_id, "----------", self.actions.delay, "----------", self.value)
-
     def add_steps(self, new_steps):
+        """add new steps"""
         self.actions.steps = self.actions.steps + new_steps

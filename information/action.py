@@ -8,5 +8,4 @@ class Action():
         return {
             "delay": self.delay,
             "steps": self.steps,
-            "start_at": self.start_at
         }
