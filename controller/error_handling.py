@@ -9,66 +9,48 @@ from information.customer import Customer
 from information.server import Server
 
 # TODO input the ip and port of the computer running
-main_server_ip_address = "Server ip"
-main_server_port = "port"
+main_server_ip_address = "SERVER_IP"
+main_server_port = "PORT"
 
 
-# TODO: do something about check actions inside another person loging it make error
 def check_input(customer_input: dict, db: data_base):
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
+    check_s, steps = check_steps(customer_input["actions"]["steps"])
+    check_d, delay = check_delay(customer_input["actions"]["delay"])
+    check_serv = check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
+    if not check_serv:
+        return jsonify(messag='Error - server is not valid', category='Fail')
+    if not check_d and not check_s:
+        return jsonify(message='Error - actions are not valid', category='Fail')
     if costumer_id_exists(try_id, db):
         existing_cust = get_customer_from_id(try_id, db)
-        if check_password(existing_cust, try_pswrd):
-            if existing_cust.last_instance >= 2:
-                return jsonify({'message': ' only two instances can be in same account'})
-            else:
-                existing_cust.last_instance += 1
-                # TODO: simultaneously actions for two people in same account
-                check_s, steps = check_steps(customer_input["actions"]["steps"])
-                check_d, delay = check_delay(customer_input["actions"]["delay"])
-                if check_d and check_s:
-                    existing_cust.add_steps(steps)
-                    # existing_cust.do_steps(0)
-                    existing_cust.do_steps()
-                else:
-                    return jsonify(message='Error - action is not valid', category='Fail')
-
-                return jsonify(message='Password validated correctly!', category='Success',
-                               # data=data,
-                               status=200)
-        else:
-            return jsonify(message='Error - wrong password', category='Fail',
-                           # data=data,
-                           status=200)
+        if not check_password(existing_cust, try_pswrd):
+            return jsonify(message='Error - wrong password', category='Fail')
+        if existing_cust.last_instance >= 2:
+            return jsonify(message='Error - only two instances can be in same account', category='Fail')
+        existing_cust.last_instance += 1
+        existing_cust.add_steps(steps)
+        existing_cust.do_steps()
+        return jsonify(message='Password validated correctly!', category='Success')
     else:
-        # if come here account doesnt already exist
-        logging.info('new account')
-        check_s, steps = check_steps(customer_input["actions"]["steps"])
-        check_d, delay = check_delay(customer_input["actions"]["delay"])
         is_pw = check_pw(customer_input["password"])
         is_id = check_id(customer_input["id"])
-        check_serv = check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
-        if is_id:
-            if is_pw:
-                if check_d and check_s and is_pw and is_id and check_serv:
-                    actions = Action(delay=delay, steps=steps)
-                    try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
-                    server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
-                    customer = Customer(try_id, try_pswrd, server, actions, salt)
-                    db.add_customer(customer)  # add customer to db
-                    customer.do_steps(0)
-                    data = customer.dictionary()
-                    return jsonify(message='new customer',
-                                   category='success',
-                                   data=data,
-                                   status=200)
-                else:
-                    return jsonify(message='Error - action is not valid', category='Fail')
-            else:
-                return jsonify(message='Error - password is not valid', category='Fail')
-        else:
-            return jsonify(message='Error - id is not valid', category='Fail')
+        if not is_pw:
+            return jsonify(message='Error - password is not valid. Password can be at most 120 characters.',
+                           category='Fail')
+        if not is_id:
+            return jsonify(message='Error - id is not valid. Id can be at most 20 characters.', category='Fail')
+        actions = Action(delay=delay, steps=steps)
+        try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
+        server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
+        customer = Customer(try_id, try_pswrd, server, actions, salt)
+        db.add_customer(customer)  # add customer to db
+        customer.do_steps()
+        data = customer.dictionary()
+        return jsonify(message='new customer',
+                       category='success',
+                       data=data)
 
 
 # check if customer id already exist
@@ -138,6 +120,8 @@ def add_actions(customer, steps):
     customer.actions.add(steps)
 
 
-def check_srvr(customer, new_ip_address, new_port):
-    if new_ip_address == main_server_ip_address and new_port == main_server_port:
+def check_srvr(new_ip, new_port):
+    if new_ip == main_server_ip_address and new_port == main_server_port:
         return True
+    else:
+        return False

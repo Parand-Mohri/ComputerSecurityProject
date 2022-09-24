@@ -34,16 +34,16 @@ def login():
 @app.route('/logout/<id>')
 def logout(id):
     customer = error_handling.get_customer_from_id(id, db)
-    if customer is not None:
-        if customer.last_instance == 1:
-            if not customer.inprocess:
-                db.remove_customer(customer)
-                return jsonify({'message': 'You logged out successfully'})
-            else:
-                return jsonify({'message': 'cant logout when actions still happening'})
-        else:
-            customer.last_instance -= 1
-            return jsonify({'message': 'You logged out successfully & you NOT the last instance'})
-    else:
-        # we shouldn't get here but just to be sure
+    if customer is None:
         return jsonify({'message': 'The account does not exist to log out'})
+    if customer.last_instance > 1:
+        customer.last_instance -= 1
+        return jsonify({'message': 'You logged out successfully & you NOT the last instance'})
+    if customer.inprocess:
+        return jsonify({'message': 'cant logout when actions still happening'})
+    db.remove_customer(customer)
+    return jsonify({'message': 'You logged out successfully'})
+
+
+
+

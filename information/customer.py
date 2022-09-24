@@ -39,12 +39,12 @@ class Customer():
         steps = self.actions.steps
         next_step = steps[self.actions.start_at]
         self.add(float(next_step))
-        self.actions.start_at +=1
-        timer = threading.Timer(float(self.actions.delay), self.do_steps)
-        timer.start()
-        if self.actions.start_at == len(self.actions.steps):
+        self.actions.start_at += 1
+        if not self.actions.start_at == len(self.actions.steps):
+            timer = threading.Timer(float(self.actions.delay), self.do_steps)
+            timer.start()
+        else:
             self.inprocess = False
-            timer.cancel()
         print(self.customer_id, "----------", self.actions.delay, "----------", self.value)
 
     def add_steps(self, new_steps):
