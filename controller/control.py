@@ -56,9 +56,8 @@ def login(customer_input: dict, db: data_base):
         logging.info('%s : logged in', msg)
         customer.do_steps()
         data = customer.dictionary()
-        return jsonify(message='new customer',
-                       category='success',
-                       data=data)
+        return jsonify(message='New customer',
+                       category='success')
 
 
 def logout(customer_id, db:data_base):
