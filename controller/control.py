@@ -18,7 +18,7 @@ def login(customer_input: dict, db: data_base):
     check_serv = eh.check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
     if not check_serv:
         return jsonify(messag='Error - server is not valid', category='Fail')
-    if not check_d and not check_s:
+    if not check_d or not check_s:
         return jsonify(message='Error - actions are not valid', category='Fail')
     if eh.costumer_id_exists(try_id, db):
         existing_cust = eh.get_customer_from_id(try_id, db)
@@ -38,13 +38,15 @@ def login(customer_input: dict, db: data_base):
                 existing_cust.do_steps()
         return jsonify(message='Password validated correctly!', category='Success')
     else:
+        if len(steps) < 1:
+            return jsonify(message='You need to add steps as first instance!', category='Fail')
         is_pw = eh.check_pw(customer_input["password"])
         is_id = eh.check_id(customer_input["id"])
         if not is_pw:
-            return jsonify(message='Error - password is not valid. Password can be at most 120 characters.',
+            return jsonify(message='Error - password is not valid. Password should be between 1 and 120 characters.',
                            category='Fail')
         if not is_id:
-            return jsonify(message='Error - id is not valid. Id can be at most 20 characters.', category='Fail')
+            return jsonify(message='Error - id is not valid. Id should be between 1 and 20 characters.', category='Fail')
         actions = Action(delay=delay, steps=steps)
         try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
         server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])

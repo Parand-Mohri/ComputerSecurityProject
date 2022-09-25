@@ -41,6 +41,8 @@ def is_number(string: str) -> bool:
 
 def check_delay(delay: str):
     """return True if the value given as delay is a number"""
+    if len(delay) < 1:
+        return False, -1
     if is_number(delay) and float(delay) >= 0:
         return True, float(delay)
     else:
@@ -60,7 +62,7 @@ def check_steps(steps):
 
 def check_id(cust_id: str) -> bool:
     """"return True if given id is less than 20 characters"""
-    if len(cust_id) < 20:
+    if 20 > len(cust_id) > 0:
         return True
     else:
         return False
@@ -68,7 +70,7 @@ def check_id(cust_id: str) -> bool:
 
 def check_pw(cust_pw: str) -> bool:
     """return True if given password is less than 120 characters"""
-    if len(cust_pw) < 120:
+    if 120 > len(cust_pw) > 0:
         return True
     else:
         return False
