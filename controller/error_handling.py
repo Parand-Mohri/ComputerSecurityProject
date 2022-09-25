@@ -2,9 +2,9 @@ from controller import data_base
 from controller import hash_password
 from information.customer import Customer
 
-# TODO input the ip and port of the computer running
-main_server_ip_address = "SERVER_IP"
-main_server_port = "PORT"
+# server information of local host
+main_server_ip_address = "127.0.0.1"
+main_server_port = "5000"
 
 
 def costumer_id_exists(customer_id, db: data_base) -> bool:
