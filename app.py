@@ -9,16 +9,14 @@ app = Flask(__name__)
 db = DataBase()
 CORS(app)
 
-# logging.basicConfig(filename="record.log", level=logging.DEBUG)
+logging.basicConfig(filename="record.log", level=logging.DEBUG)
 
-# log = logging.getLogger('werkzeug')
-# log.disabled = True
-# app.logger.disabled = True
+log = logging.getLogger('werkzeug')
+log.disabled = True
+app.logger.disabled = True
 
 
-# TODO: commenting
 # TODO: connect GUI
-# TODO: log all the actions
 
 # Test
 @app.route("/")

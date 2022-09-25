@@ -29,6 +29,8 @@ def login(customer_input: dict, db: data_base):
         if existing_cust.actions.delay != delay:
             return jsonify(message='Error - cannot change the delay', category='Fail')
         existing_cust.last_instance += 1
+        msg = "New instance of customer:", str(existing_cust.customer_id),
+        logging.info('%s : new instance', msg)
         if len(steps) > 0:
             existing_cust.add_steps(steps)
             if not existing_cust.inprocess:
@@ -48,6 +50,8 @@ def login(customer_input: dict, db: data_base):
         server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
         customer = Customer(try_id, try_pswrd, server, actions, salt)
         db.add_customer(customer)  # add customer to db
+        msg = "Customer:", str(customer.customer_id),
+        logging.info('%s : logged in', msg)
         customer.do_steps()
         data = customer.dictionary()
         return jsonify(message='new customer',
@@ -64,5 +68,7 @@ def logout(customer_id, db:data_base):
         return jsonify(messag='You logged out successfully & you NOT the last instance', category='Success')
     if customer.inprocess:
         return jsonify(messag='Error - cant logout when actions still happening', category='Fail')
+    msg = "Customer:", str(customer.customer_id),
+    logging.info('%s : logged out', msg)
     db.remove_customer(customer)
     return jsonify(messag='You logged out successfully', category='Success')

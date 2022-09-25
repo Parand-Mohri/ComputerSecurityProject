@@ -5,7 +5,6 @@ import string
 
 # source: https://github.com/apscandy/database-hash-demo-python/blob/main/backend/hashing.py
 
-# hash the password and return the hash password with used salt to be saved
 def hash_salt_and_pepper(password: str):
     """hash the password and return the salt and new password"""
     salt = salt_generator()
@@ -15,13 +14,11 @@ def hash_salt_and_pepper(password: str):
     return password, salt
 
 
-# hash the password using build in library
 def hash_password(password):
     """use md5 to hash the password"""
     return hashlib.md5(str.encode(password)).hexdigest()
 
 
-#
 def salt_generator():
     """generate and return random str with size 64 that added to password before hashing"""
     salt = ''
