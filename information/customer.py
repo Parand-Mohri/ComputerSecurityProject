@@ -5,7 +5,7 @@ from information import action
 from information import server
 
 
-class Customer():
+class Customer:
     def __init__(self, customer_id, password, server: server, actions: action, salt: str):
         self.customer_id = customer_id
         self.password = password
