@@ -57,20 +57,20 @@ def login(customer_input: dict, db: data_base):
         customer.do_steps()
         data = customer.dictionary()
         return jsonify(message='new customer',
-                       category='success',
+                       category='Success',
                        data=data)
 
 
 def logout(customer_id, db:data_base):
     customer = eh.get_customer_from_id(customer_id, db)
     if customer is None:
-        return jsonify(messag='Error - The account does not exist to log out', category='Fail')
+        return jsonify(message='Error - The account does not exist to log out', category='Fail')
     if customer.last_instance > 1:
         customer.last_instance -= 1
-        return jsonify(messag='You logged out successfully & you NOT the last instance', category='Success')
+        return jsonify(message='You logged out successfully & you NOT the last instance', category='Success')
     if customer.inprocess:
-        return jsonify(messag='Error - cant logout when actions still happening', category='Fail')
+        return jsonify(message='Error - cant logout when actions still happening', category='Fail')
     msg = "Customer:", str(customer.customer_id),
     logging.info('%s : logged out', msg)
     db.remove_customer(customer)
-    return jsonify(messag='You logged out successfully', category='Success')
+    return jsonify(message='You logged out successfully', category='Success')

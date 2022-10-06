@@ -36,7 +36,6 @@ class Customer:
     def do_steps(self):
         """do the steps with given delay"""
         steps = self.actions.steps
-        print(self.actions.start_at)
         next_step = steps[self.actions.start_at]
         self.add(float(next_step))
         self.actions.start_at += 1
