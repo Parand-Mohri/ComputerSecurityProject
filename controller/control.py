@@ -1,4 +1,7 @@
+from email import message
 import logging
+import threading
+from unicodedata import category
 
 from flask import jsonify
 
@@ -8,22 +11,35 @@ from information.action import Action
 from information.customer import Customer
 from information.server import Server
 
+attempt_counter = 0
 
 def login(customer_input: dict, db: data_base):
     """return success if all the information given is correct"""
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
     check_s, steps = eh.check_steps(customer_input["actions"]["steps"])
+
+    if check_s == False:
+        return jsonify(messag='Error - Wrong input. Only numbers between -200 and 2000000', category='Fail')
+
     check_d, delay = eh.check_delay(customer_input["actions"]["delay"])
     check_serv = eh.check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
+    check_balance = eh.check_balance()
     if not check_serv:
         return jsonify(messag='Error - server is not valid', category='Fail')
     if not check_d or not check_s:
         return jsonify(message='Error - actions are not valid', category='Fail')
+    
     if eh.costumer_id_exists(try_id, db):
         existing_cust = eh.get_customer_from_id(try_id, db)
-        if not eh.check_password(existing_cust, try_pswrd):
-            return jsonify(message='Error - wrong password or user name', category='Fail')
+        log_in_legit, msg , need_delay = eh.check_login_attempts(attempt_counter, try_pswrd, existing_cust)
+        if log_in_legit :
+            return jsonify(message = msg, category = 'Success')
+        else :
+            if need_delay:
+                timer = threading.Timer(float(180), login(customer_input, db))
+                timer.start()
+                return jsonify(message = msg, category = 'Fail')
         if existing_cust.last_instance >= 2:
             return jsonify(message='Error - only two instances can be in same account', category='Fail')
         if existing_cust.actions.delay != delay:

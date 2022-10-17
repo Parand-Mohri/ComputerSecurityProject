@@ -1,6 +1,8 @@
 from controller import data_base
 from controller import hash_password
 from information.customer import Customer
+import time
+
 
 # server information of local host
 main_server_ip_address = "127.0.0.1"
@@ -53,10 +55,9 @@ def check_delay(delay: str):
 def check_steps(steps):
     """return True if the steps given are numbers"""
     for s in steps:
-        if not is_number(s):
+        num =  float(s)
+        if not is_number(s) or num >= 2000000 or num <= -200 :
             return False, -1
-        else:
-            float(s)
     return True, steps
 
 
@@ -82,3 +83,28 @@ def check_srvr(new_ip, new_port):
         return True
     else:
         return False
+
+def check_login_attempts(attempt_counter : float, cust_pwd : str, customer : Customer):
+    return_msg = ''
+    attempt_counter += 1
+    if attempt_counter <= 3:
+        if check_password(customer, cust_pwd):
+            return_msg = 'Password validated correctly!'
+            attempt_counter = 0
+            return True, return_msg, False
+        else:
+            return_msg = 'Error - wrong password or user name'
+            return False, return_msg , False
+    elif attempt_counter == 4:
+        attempt_counter = 0
+        return_msg = 'Wrong Password or user name 3 times. Please wait 3 minutes.' 
+        return False , return_msg, True
+    
+        # if guess == password:
+        #   print("u did it niceeeee")
+        # elif count == 3:
+        #   print("Number of tries maxed.")
+        #   countdown()
+        #   count = 0  # <<<<<<<<<< ONLY THIS NEEDS TO BE ADDED 
+        # else:
+        #   print("Your pin is denied, Try again")
