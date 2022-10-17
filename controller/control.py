@@ -23,7 +23,7 @@ def login(customer_input: dict, db: data_base):
     if eh.costumer_id_exists(try_id, db):
         existing_cust = eh.get_customer_from_id(try_id, db)
         if not eh.check_password(existing_cust, try_pswrd):
-            return jsonify(message='Error - wrong password', category='Fail')
+            return jsonify(message='Error - wrong password or user name', category='Fail')
         if existing_cust.last_instance >= 2:
             return jsonify(message='Error - only two instances can be in same account', category='Fail')
         if existing_cust.actions.delay != delay:
