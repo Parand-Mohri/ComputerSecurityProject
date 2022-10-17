@@ -77,16 +77,24 @@ def login(customer_input: dict, db: data_base):
                        data=data)
 
 
-def logout(customer_id, db:data_base):
-    customer = eh.get_customer_from_id(customer_id, db)
+def logout(customer_input: dict, db: data_base):
+    try_id = customer_input["id"]
+    try_pswrd = customer_input["password"]
+    customer = eh.get_customer_from_id(try_id, db)
     if customer is None:
         return jsonify(message='Error - The account does not exist to log out', category='Fail')
     if customer.last_instance > 1:
-        customer.last_instance -= 1
-        return jsonify(message='You logged out successfully & you NOT the last instance', category='Success')
+        if try_pswrd == customer.password:
+            customer.last_instance -= 1
+            return jsonify(message='You logged out successfully & you NOT the last instance', category='Success')
+        else:
+            return jsonify(message='Your credentials do not match with your previous logging', category = 'Fail')
     if customer.inprocess:
         return jsonify(message='Error - cant logout when actions still happening', category='Fail')
     msg = "Customer:", str(customer.customer_id),
     logging.info('%s : logged out', msg)
+    if try_pswrd == customer.password:
+        return jsonify(message='You logged out successfully', category='Success')
+    else:
+        return jsonify(message = 'Not matching credentials with previous logging ', category='Fail')
     db.remove_customer(customer)
-    return jsonify(message='You logged out successfully', category='Success')

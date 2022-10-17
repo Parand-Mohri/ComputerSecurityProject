@@ -29,9 +29,9 @@ def login():
     return control.login(request.json, db)
 
 
-@app.route('/logout/<customer_id>')
-def logout(customer_id):
-    return control.logout(customer_id, db)
+@app.route('/logout', methods=["POST"])
+def logout():
+    return control.logout(request.json, db)
 
 
 
