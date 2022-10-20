@@ -28,7 +28,7 @@ flask run
 ### Vulnerabilities found by other groups
 * Brute Force Password: No Limit to the number of password attempts 
 * The API for logging in returns a “Incorrect Password” response if the password does not match.
-* As the user’s password is not verified for logout, users can be logged out simply if the username is unknown.
+* As the user’s password is not verified for logout, users can be logged out simply if the username is known.
 * No cryptography is used to secure requests so a MITM attack would show the user’s password and username in plain text
 * Balance/Counter goes to infinity (denoted in the log as “Inf”) when inputting an extremely large
 number.
@@ -36,12 +36,17 @@ number.
 
 ### Vulnerabilities we found by ourselves
 * Accept empy ID and password 
+* accept special character for id and password --> reflected XSS 
+* Accept well knows password --> brute force attack
 
 ### Vulnerabilities we fixed in fix it part
 * Limitation for password attempts (after 3 wrong attempts need to wait for 3 minutes)
+* using positive security rule (only accept A-Z, a-z, 0-9)
+* Not allowing user to choose well known passwords
 * Password for logout 
 * Limit on counter 
 * Only logout possible from same servers that log in was done
 * Not allow making account with empty Id and password 
 * No specify error given so attacker dont know if the password is wrong or id (fix second vulnerability given)
 * Encrypting the code 
+

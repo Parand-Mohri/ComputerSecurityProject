@@ -1,7 +1,5 @@
-from email import message
 import logging
 import threading
-from unicodedata import category
 
 from flask import jsonify
 
@@ -12,6 +10,7 @@ from information.customer import Customer
 from information.server import Server
 
 attempt_counter = 0
+
 
 def login(customer_input: dict, db: data_base):
     """return success if all the information given is correct"""
@@ -24,22 +23,22 @@ def login(customer_input: dict, db: data_base):
     if eh.costumer_id_exists(try_id, db):
         existing_cust = eh.get_customer_from_id(try_id, db)
         log_in_legit, msg , need_delay = eh.check_login_attempts(attempt_counter, try_pswrd, existing_cust)
-        
+
         if not log_in_legit : #If password and username are correct
             if need_delay: # wrong pswd or username and was attempted more than 3 times  --> need delay
                 timer = threading.Timer(float(180), login(customer_input, db))
                 timer.start()
-                return jsonify(message = msg, category = 'Fail')
+                return jsonify(message = "Oooops something went wrong", category = 'Fail')
             else: # wrong pswd or username and was attempted less than 3 times --> no need delay
-                return jsonify(message = msg, category = 'Fail')
+                return jsonify(message = "Oooops something went wrong", category = 'Fail')
 
         elif log_in_legit :           # if password or username wrong
-        
+
             if existing_cust.last_instance >= 2:
                 return jsonify(message='Error - only two instances can be in same account', category='Fail')
             if existing_cust.actions.delay != delay:
                 return jsonify(message='Error - cannot change the delay', category='Fail')
-            
+
             existing_cust.server.append(Server(customer_input["server"]["ip"], customer_input["server"]["port"]))
             existing_cust.last_instance += 1
             msg = "New instance of customer:", str(existing_cust.customer_id),
