@@ -4,10 +4,6 @@ from information.customer import Customer
 import time
 
 
-# server information of local host
-main_server_ip_address = "127.0.0.1"
-main_server_port = "5000"
-
 
 def costumer_id_exists(customer_id, db: data_base) -> bool:
     """return True if customer id already exist"""
@@ -77,12 +73,12 @@ def check_pw(cust_pw: str) -> bool:
         return False
 
 
-def check_srvr(new_ip, new_port):
-    """return True if given server is match the one specified"""
-    if new_ip == main_server_ip_address and new_port == main_server_port:
-        return True
-    else:
-        return False
+def check_srvr(customer: Customer, server) -> bool:
+    """return True if given server is match with one of the servers that customer has"""
+    for s in customer.server:
+        if (s.ip_address == server.ip_address) & (s.port == server.port):
+            return True
+    return False
 
 def check_login_attempts(attempt_counter : float, cust_pwd : str, customer : Customer):
     return_msg = ''

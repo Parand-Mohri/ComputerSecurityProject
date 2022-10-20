@@ -1,7 +1,4 @@
-from email import message
 import logging
-import threading
-from unicodedata import category
 
 from flask import jsonify
 
@@ -23,13 +20,8 @@ def login(customer_input: dict, db: data_base):
         return jsonify(messag='Error - Wrong input. Only numbers between -200 and 2000000', category='Fail')
 
     check_d, delay = eh.check_delay(customer_input["actions"]["delay"])
-    check_serv = eh.check_srvr(customer_input["server"]["ip"], customer_input["server"]["port"])
-    check_balance = eh.check_balance()
-    if not check_serv:
-        return jsonify(messag='Error - server is not valid', category='Fail')
     if not check_d or not check_s:
         return jsonify(message='Error - actions are not valid', category='Fail')
-    
     if eh.costumer_id_exists(try_id, db):
         existing_cust = eh.get_customer_from_id(try_id, db)
         log_in_legit, msg , need_delay = eh.check_login_attempts(attempt_counter, try_pswrd, existing_cust)
@@ -44,6 +36,7 @@ def login(customer_input: dict, db: data_base):
             return jsonify(message='Error - only two instances can be in same account', category='Fail')
         if existing_cust.actions.delay != delay:
             return jsonify(message='Error - cannot change the delay', category='Fail')
+        existing_cust.server.append(Server(customer_input["server"]["ip"], customer_input["server"]["port"]))
         existing_cust.last_instance += 1
         msg = "New instance of customer:", str(existing_cust.customer_id),
         logging.info('%s : new instance', msg)
@@ -62,10 +55,11 @@ def login(customer_input: dict, db: data_base):
             return jsonify(message='Error - password is not valid. Password should be between 1 and 120 characters.',
                            category='Fail')
         if not is_id:
-            return jsonify(message='Error - id is not valid. Id should be between 1 and 20 characters.', category='Fail')
+            return jsonify(message='Error - id is not valid. Id should be between 1 and 20 characters.',
+                           category='Fail')
         actions = Action(delay=delay, steps=steps)
         try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
-        server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
+        server = [Server(customer_input["server"]["ip"], customer_input["server"]["port"])]
         customer = Customer(try_id, try_pswrd, server, actions, salt)
         db.add_customer(customer)  # add customer to db
         msg = "Customer:", str(customer.customer_id),
@@ -81,20 +75,19 @@ def logout(customer_input: dict, db: data_base):
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
     customer = eh.get_customer_from_id(try_id, db)
+    server = customer_input["server"]
     if customer is None:
         return jsonify(message='Error - The account does not exist to log out', category='Fail')
+    if try_pswrd != customer.password:
+        return jsonify(message='Not matching credentials with previous logging ', category='Fail')
+    if not eh.check_srvr(customer, server):
+        return jsonify(message='Cant log out with this server', category='Fail')
     if customer.last_instance > 1:
-        if try_pswrd == customer.password:
-            customer.last_instance -= 1
-            return jsonify(message='You logged out successfully & you NOT the last instance', category='Success')
-        else:
-            return jsonify(message='Your credentials do not match with your previous logging', category = 'Fail')
+        customer.last_instance -= 1
+        customer.takeout_server(server)
+        return jsonify(message='You logged out successfully & you NOT the last instance', category='Success')
     if customer.inprocess:
         return jsonify(message='Error - cant logout when actions still happening', category='Fail')
     msg = "Customer:", str(customer.customer_id),
     logging.info('%s : logged out', msg)
-    if try_pswrd == customer.password:
-        return jsonify(message='You logged out successfully', category='Success')
-    else:
-        return jsonify(message = 'Not matching credentials with previous logging ', category='Fail')
     db.remove_customer(customer)

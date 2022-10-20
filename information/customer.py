@@ -25,6 +25,12 @@ class Customer:
             "value": self.value
         }
 
+    def takeout_server(self, new_server: server):
+        for s in server:
+            if (s.ip_address == new_server.ip_address) & (s.port == new_server.port):
+                server.remove()
+                return
+
     def add(self, value_amount: float):
         """add the step to  value"""
         previous_value = self.value
