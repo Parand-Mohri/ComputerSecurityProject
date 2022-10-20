@@ -20,7 +20,7 @@ class Customer:
         return {
             "customer_id": self.customer_id,
             "password": self.password,
-            "server": self.server.dictionary(),
+            # "server": self.server.dictionary(),
             "actions": self.actions.dictionary(),
             "value": self.value
         }

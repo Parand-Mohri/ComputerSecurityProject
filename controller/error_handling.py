@@ -51,8 +51,8 @@ def check_delay(delay: str):
 def check_steps(steps):
     """return True if the steps given are numbers"""
     for s in steps:
-        num =  float(s)
-        if not is_number(s) or num >= 2000000 or num <= -200 :
+        num = float(s)
+        if not is_number(s):
             return False, -1
     return True, steps
 
