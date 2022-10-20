@@ -1,6 +1,5 @@
 import logging
 import threading
-
 from flask import jsonify
 
 from controller import data_base, hash_password
