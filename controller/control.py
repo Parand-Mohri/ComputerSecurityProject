@@ -1,4 +1,5 @@
 import logging
+import threading
 
 from flask import jsonify
 
@@ -8,16 +9,28 @@ from information.action import Action
 from information.customer import Customer
 from information.server import Server
 
+
 attempt_counter = 0
 
 def login(customer_input: dict, db: data_base):
     """return success if all the information given is correct"""
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
+
+    common_f = open("common_passwords", "r")
+    print(common_f.read())
+    for sline in common_f:
+        c_psw = sline.split()
+    for psw in c_psw:
+        if try_pswrd == psw:
+            print("This is a common password, try again")
+            return jsonify(messag='Error - Password is not secure', category='Fail')
+
+
     check_s, steps = eh.check_steps(customer_input["actions"]["steps"])
 
     if check_s == False:
-        return jsonify(messag='Error - Wrong input. Only numbers between -200 and 2000000', category='Fail')
+         return jsonify(messag='Error - Wrong input. Only numbers between -200 and 2000000', category='Fail')
 
     check_d, delay = eh.check_delay(customer_input["actions"]["delay"])
     if not check_d or not check_s:
