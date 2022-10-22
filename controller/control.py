@@ -15,17 +15,6 @@ def login(customer_input: dict, db: data_base):
     """return success if all the information given is correct"""
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
-
-    common_f = open("common_passwords", "r")
-    print(common_f.read())
-    for sline in common_f:
-        c_psw = sline.split()
-    for psw in c_psw:
-        if try_pswrd == psw:
-            print("This is a common password, try again")
-            return jsonify(messag='Error - Password is not secure', category='Fail')
-
-
     check_s, steps = eh.check_steps(customer_input["actions"]["steps"])
     check_d, delay = eh.check_delay(customer_input["actions"]["delay"])
     if not check_d or not check_s:
@@ -70,6 +59,19 @@ def login(customer_input: dict, db: data_base):
                 if not is_id:
                     return jsonify(message='Error - id is not valid. Id should be between 1 and 20 characters.',
                                 category='Fail')
+
+                # Check for common psw
+                common_f = open("common_passwords.txt", "r")
+                c_psw = []
+                for sline in common_f:
+                    c_psw.append(sline.split())
+                for psw in c_psw:
+                    tmp_str = " "
+                    psw = tmp_str.join(psw)
+                    if try_pswrd == psw:
+                        print("This is a common password, try again")
+                        return jsonify(messag='Error - Password is not secure', category='Fail')
+
                 actions = Action(delay=delay, steps=steps)
                 try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
                 server = [Server(customer_input["server"]["ip"], customer_input["server"]["port"])]
