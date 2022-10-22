@@ -15,6 +15,8 @@ class Customer:
         self.value = 0
         self.last_instance = 1
         self.inprocess = True
+        self.attempt_count = 0
+        self.account_frozen = False
 
     def dictionary(self):
         return {

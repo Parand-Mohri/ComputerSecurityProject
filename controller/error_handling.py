@@ -80,27 +80,22 @@ def check_srvr(customer: Customer, server) -> bool:
             return True
     return False
 
-def check_login_attempts(attempt_counter : float, cust_pwd : str, customer : Customer):
+def check_login_attempts(cust_pwd : str, customer : Customer):
     return_msg = ''
-    attempt_counter += 1
-    if attempt_counter <= 3:
+    customer.attempt_count += 1
+    print('cus ', customer.attempt_count)
+    if customer.attempt_count <= 5:
         if check_password(customer, cust_pwd):
             return_msg = 'Password validated correctly!'
-            attempt_counter = 0
-            return True, return_msg, False
+            customer.attempt_count = 0
+            return True, return_msg
         else:
-            return_msg = 'Error - wrong password or user name'
-            return False, return_msg , False
-    elif attempt_counter == 4:
-        attempt_counter = 0
-        return_msg = 'Wrong Password or user name 3 times. Please wait 3 minutes.' 
-        return False , return_msg, True
+            remaining = 5 - customer.attempt_count
+            return_msg = 'Error - wrong password or user name, you have ' + str(remaining) + ' attempts remaining'
+            return False, return_msg
+
+    elif customer.attempt_count == 6:    # if they failed login more than 5 times
+        customer.account_frozen = True
+        return_msg = 'Cannot login, user is blocked.'
+        return False , return_msg
     
-        # if guess == password:
-        #   print("u did it niceeeee")
-        # elif count == 3:
-        #   print("Number of tries maxed.")
-        #   countdown()
-        #   count = 0  # <<<<<<<<<< ONLY THIS NEEDS TO BE ADDED 
-        # else:
-        #   print("Your pin is denied, Try again")

@@ -1,5 +1,4 @@
 import logging
-import threading
 from flask import jsonify
 
 from controller import data_base, hash_password
@@ -19,20 +18,22 @@ def login(customer_input: dict, db: data_base):
     check_d, delay = eh.check_delay(customer_input["actions"]["delay"])
     if not check_d or not check_s:
         return jsonify(message='Error - actions are not valid', category='Fail')
+    
+    ########### For existing customer ###################
+    
     if eh.costumer_id_exists(try_id, db):
+        
         existing_cust = eh.get_customer_from_id(try_id, db)
-        log_in_legit, msg , need_delay = eh.check_login_attempts(attempt_counter, try_pswrd, existing_cust)
-
-        if not log_in_legit : #If password and username are correct
-            if need_delay: # wrong pswd or username and was attempted more than 3 times  --> need delay
-                timer = threading.Timer(float(180), login(customer_input, db))
-                timer.start()
-                return jsonify(message = "Oooops something went wrong", category = 'Fail')
-            else: # wrong pswd or username and was attempted less than 3 times --> no need delay
-                return jsonify(message = "Oooops something went wrong", category = 'Fail')
-
-        elif log_in_legit :           # if password or username wrong
-
+        if existing_cust.account_frozen == True:
+            return jsonify(message = "You account has been frozen")
+        
+        log_in_legit, msg = eh.check_login_attempts(try_pswrd, existing_cust)
+        print('counter -' , existing_cust.attempt_count)
+        
+        if not log_in_legit:
+            return jsonify(message = msg, category = 'Fail')
+            
+        else:           # if login successful
             if existing_cust.last_instance >= 2:
                 return jsonify(message='Error - only two instances can be in same account', category='Fail')
             if existing_cust.actions.delay != delay:
@@ -48,6 +49,10 @@ def login(customer_input: dict, db: data_base):
                     existing_cust.inprocess = True
                     existing_cust.do_steps()
             return jsonify(message='Password validated correctly!', category='Success')
+
+
+    ########### New customer ###################
+
     else:
                 if len(steps) < 1:
                     return jsonify(message='You need to add steps as first instance!', category='Fail')
