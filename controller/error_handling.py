@@ -4,7 +4,6 @@ from information.customer import Customer
 import time
 
 
-
 def costumer_id_exists(customer_id, db: data_base) -> bool:
     """return True if customer id already exist"""
     for customer in db.customers:
@@ -37,11 +36,11 @@ def is_number(string: str) -> bool:
         return False
 
 
-def check_delay(delay: str):
+def check_delay(delay: int):
     """return True if the value given as delay is a number"""
-    if len(delay) < 1:
+    if not is_number(delay):
         return False, -1
-    if is_number(delay) and float(delay) >= 0:
+    if float(delay) >= 0:
         return True, float(delay)
     else:
         return False, -1
@@ -51,7 +50,6 @@ def check_delay(delay: str):
 def check_steps(steps):
     """return True if the steps given are numbers"""
     for s in steps:
-        num = float(s)
         if not is_number(s):
             return False, -1
     return True, steps
@@ -80,10 +78,23 @@ def check_srvr(customer: Customer, server) -> bool:
             return True
     return False
 
-def check_login_attempts(cust_pwd : str, customer : Customer):
-    return_msg = ''
+
+def common_pass(id: str, password: str) -> bool:
+    common_f = open("common_passwords.txt", "r")
+    c_psw = [id]
+    for sline in common_f:
+        c_psw.append(sline.split())
+    for psw in c_psw:
+        # tmp_str = " "
+        # psw = tmp_str.join(psw)
+        if password == psw:
+
+            return False
+    return True
+
+
+def check_login_attempts(cust_pwd: str, customer: Customer):
     customer.attempt_count += 1
-    print('cus ', customer.attempt_count)
     if customer.attempt_count <= 5:
         if check_password(customer, cust_pwd):
             return_msg = 'Password validated correctly!'
@@ -94,8 +105,7 @@ def check_login_attempts(cust_pwd : str, customer : Customer):
             return_msg = 'Error - wrong password or user name, you have ' + str(remaining) + ' attempts remaining'
             return False, return_msg
 
-    elif customer.attempt_count == 6:    # if they failed login more than 5 times
+    elif customer.attempt_count == 6:  # if they failed login more than 5 times
         customer.account_frozen = True
         return_msg = 'Cannot login, user is blocked.'
-        return False , return_msg
-    
+        return False, return_msg

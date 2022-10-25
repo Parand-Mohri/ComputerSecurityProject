@@ -21,9 +21,10 @@ flask run
 ###Description 
 * Only two legit customer can be in the same account
 * Only able to log out from same ip and port that was used for log in 
-* If try to log in with wrong password after 3 fail attempts need to wait for 3 minutes
+* If try to log in with wrong password after 5 fail attempts account get frozen
 * Need password for login and logout 
 * The counter can't be less then -200 or more than 2000000 
+* Only the first user can specify the delay, after that its not possible to change the delay
 
 ### Vulnerabilities found by other groups
 * Brute Force Password: No Limit to the number of password attempts 
@@ -36,13 +37,15 @@ number.
 
 ### Vulnerabilities we found by ourselves
 * Accept empy ID and password 
-* accept special character for id and password --> reflected XSS 
-* Accept well knows password --> brute force attack
+* accept special character for id and password &#8594; reflected XSS 
+* Accept well knows password &#8594; brute force attack
+* Accept same string used for account as password &#8594; brute force attack
 
 ### Vulnerabilities we fixed in fix it part
 * Limitation for password attempts (after 3 wrong attempts need to wait for 3 minutes)
 * using positive security rule (only accept A-Z, a-z, 0-9)
 * Not allowing user to choose well known passwords
+* Not allowing user to choose same password as id
 * Password for logout 
 * Limit on counter 
 * Only logout possible from same servers that log in was done

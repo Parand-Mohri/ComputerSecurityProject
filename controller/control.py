@@ -7,8 +7,6 @@ from information.action import Action
 from information.customer import Customer
 from information.server import Server
 
-attempt_counter = 0
-
 
 def login(customer_input: dict, db: data_base):
     """return success if all the information given is correct"""
@@ -18,22 +16,22 @@ def login(customer_input: dict, db: data_base):
     check_d, delay = eh.check_delay(customer_input["actions"]["delay"])
     if not check_d or not check_s:
         return jsonify(message='Error - actions are not valid', category='Fail')
-    
+
     ########### For existing customer ###################
-    
+
     if eh.costumer_id_exists(try_id, db):
-        
+
         existing_cust = eh.get_customer_from_id(try_id, db)
-        if existing_cust.account_frozen == True:
-            return jsonify(message = "You account has been frozen")
-        
+        if existing_cust.account_frozen:
+            return jsonify(message="You account has been frozen")
+
         log_in_legit, msg = eh.check_login_attempts(try_pswrd, existing_cust)
-        print('counter -' , existing_cust.attempt_count)
-        
+        # print('counter -' , existing_cust.attempt_count)
+
         if not log_in_legit:
-            return jsonify(message = msg, category = 'Fail')
-            
-        else:           # if login successful
+            return jsonify(message=msg, category='Fail')
+
+        else:  # if login successful
             if existing_cust.last_instance >= 2:
                 return jsonify(message='Error - only two instances can be in same account', category='Fail')
             if existing_cust.actions.delay != delay:
@@ -54,41 +52,30 @@ def login(customer_input: dict, db: data_base):
     ########### New customer ###################
 
     else:
-                if len(steps) < 1:
-                    return jsonify(message='You need to add steps as first instance!', category='Fail')
-                is_pw = eh.check_pw(customer_input["password"])
-                is_id = eh.check_id(customer_input["id"])
-                if not is_pw:
-                    return jsonify(message='Error - password is not valid. Password should be between 1 and 120 characters.',
-                                category='Fail')
-                if not is_id:
-                    return jsonify(message='Error - id is not valid. Id should be between 1 and 20 characters.',
-                                category='Fail')
+        if len(steps) < 1:
+            return jsonify(message='You need to add steps as first instance!', category='Fail')
+        is_pw = eh.check_pw(customer_input["password"])
+        is_id = eh.check_id(customer_input["id"])
+        if not is_pw:
+            return jsonify(message='Error - password is not valid. Password should be between 1 and 120 characters.',
+                           category='Fail')
+        if not is_id:
+            return jsonify(message='Error - id is not valid. Id should be between 1 and 20 characters.',
+                           category='Fail')
+        # Check for common psw
+        if not eh.common_pass(try_id, try_pswrd):
+            return jsonify(messag='Error - Password is not secure, try another password', category='Fail')
 
-                # Check for common psw
-                common_f = open("common_passwords.txt", "r")
-                c_psw = []
-                for sline in common_f:
-                    c_psw.append(sline.split())
-                for psw in c_psw:
-                    tmp_str = " "
-                    psw = tmp_str.join(psw)
-                    if try_pswrd == psw:
-                        print("This is a common password, try again")
-                        return jsonify(messag='Error - Password is not secure', category='Fail')
-
-                actions = Action(delay=delay, steps=steps)
-                try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
-                server = [Server(customer_input["server"]["ip"], customer_input["server"]["port"])]
-                customer = Customer(try_id, try_pswrd, server, actions, salt)
-                db.add_customer(customer)  # add customer to db
-                msg = "Customer:", str(customer.customer_id),
-                logging.info('%s : logged in', msg)
-                customer.do_steps()
-                data = customer.dictionary()
-                return jsonify(message='new customer',
-                            category='Success',
-                            data=data)
+        actions = Action(delay=delay, steps=steps)
+        try_pswrd, salt = hash_password.hash_salt_and_pepper(try_pswrd)
+        server = [Server(customer_input["server"]["ip"], customer_input["server"]["port"])]
+        customer = Customer(try_id, try_pswrd, server, actions, salt)
+        db.add_customer(customer)  # add customer to db
+        msg = "Customer:", str(customer.customer_id),
+        logging.info('%s : logged in', msg)
+        customer.do_steps()
+        return jsonify(message='new customer',
+                       category='Success')
 
 
 def logout(customer_input: dict, db: data_base):
@@ -96,10 +83,8 @@ def logout(customer_input: dict, db: data_base):
     try_pswrd = customer_input["password"]
     customer = eh.get_customer_from_id(try_id, db)
     server = customer_input["server"]
-    if customer is None:
-        return jsonify(message='Error - The account does not exist to log out', category='Fail')
-    if try_pswrd != customer.password:
-        return jsonify(message='Not matching credentials with previous logging ', category='Fail')
+    if customer is None or eh.check_password(customer, try_pswrd):
+        return jsonify(message='Error - Cannot log out', category='Fail')
     if not eh.check_srvr(customer, server):
         return jsonify(message='Cant log out with this server', category='Fail')
     if customer.last_instance > 1:
