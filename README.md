@@ -42,8 +42,8 @@ number.
 * Accept same string used for account as password &#8594; brute force attack
 
 ### Vulnerabilities we fixed in fix it part
-* Limitation for password attempts (after 3 wrong attempts need to wait for 3 minutes)
-* using positive security rule (only accept A-Z, a-z, 0-9)
+* Limitation for password attempts (after 5 wrong attempts account get block)
+* Using positive security rule (only accept A-Z, a-z, 0-9)
 * Not allowing user to choose well known passwords
 * Not allowing user to choose same password as id
 * Password for logout 
@@ -51,5 +51,5 @@ number.
 * Only logout possible from same servers that log in was done
 * Not allow making account with empty Id and password 
 * No specify error given so attacker dont know if the password is wrong or id (fix second vulnerability given)
-* Encrypting the code 
+* To avoid MITM we wanted to use PKI but the connection between javascript and python was a bit confusing so we didnt add any cryptography to requests 
 

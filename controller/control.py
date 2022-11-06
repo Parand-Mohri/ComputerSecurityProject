@@ -26,7 +26,6 @@ def login(customer_input: dict, db: data_base):
             return jsonify(message="You account has been frozen")
 
         log_in_legit, msg = eh.check_login_attempts(try_pswrd, existing_cust)
-        # print('counter -' , existing_cust.attempt_count)
 
         if not log_in_legit:
             return jsonify(message=msg, category='Fail')
@@ -82,8 +81,10 @@ def logout(customer_input: dict, db: data_base):
     try_id = customer_input["id"]
     try_pswrd = customer_input["password"]
     customer = eh.get_customer_from_id(try_id, db)
-    server = customer_input["server"]
-    if customer is None or eh.check_password(customer, try_pswrd):
+    server = Server(customer_input["server"]["ip"], customer_input["server"]["port"])
+    if customer is None:
+        return jsonify(message='Error - Cannot log out', category='Fail')
+    if not eh.check_password(customer, try_pswrd):
         return jsonify(message='Error - Cannot log out', category='Fail')
     if not eh.check_srvr(customer, server):
         return jsonify(message='Cant log out with this server', category='Fail')
@@ -96,3 +97,4 @@ def logout(customer_input: dict, db: data_base):
     msg = "Customer:", str(customer.customer_id),
     logging.info('%s : logged out', msg)
     db.remove_customer(customer)
+    return jsonify(message='You logged out successfully', category='Success')
