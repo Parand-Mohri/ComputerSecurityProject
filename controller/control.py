@@ -23,7 +23,7 @@ def login(customer_input: dict, db: data_base):
 
         existing_cust = eh.get_customer_from_id(try_id, db)
         if existing_cust.account_frozen:
-            return jsonify(message="You account has been frozen")
+            return jsonify(message="You account has been frozen", category='Fail')
 
         log_in_legit, msg = eh.check_login_attempts(try_pswrd, existing_cust)
 
