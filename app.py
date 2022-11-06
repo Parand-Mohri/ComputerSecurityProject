@@ -10,11 +10,11 @@ db = DataBase()
 CORS(app)
 cors = CORS(app, resources={r"/": {"origins": "*"}})
 
-# logging.basicConfig(filename="record.log", level=logging.DEBUG)
-#
-# log = logging.getLogger('werkzeug')
-# log.disabled = True
-# app.logger.disabled = True
+logging.basicConfig(filename="record.log", level=logging.DEBUG)
+
+log = logging.getLogger('werkzeug')
+log.disabled = True
+app.logger.disabled = True
 
 
 # Test
